@@ -13,6 +13,44 @@ public class RoleDao {
 	public static String dbUser = "root";
 	public static String dbpasswd = "sjm1771033";
 	
+	public int deleteRole(int roleId) {
+		int deleteCount = 0;
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			// 드라이버 매니저가 getConnection
+			conn = (Connection) DriverManager.getConnection(dburl, dbUser, dbpasswd);
+			String sql = "DELETE FROM role WHERE role_id = ?";
+			// connection의 상태 변화 -> by sql 문 
+			ps = (PreparedStatement) conn.prepareStatement(sql);
+			// 상태 변화 후 role_id 대입
+			ps.setInt(1, roleId);
+			// ps문 끝마쳤으면 실행
+			deleteCount = ps.executeUpdate();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if(conn!=null) {
+				try {
+					conn.close();
+				} catch (Exception e2) {
+					e2.printStackTrace();
+				}
+			}
+			if(ps!=null) {
+				try {
+					ps.close();
+				} catch (Exception e2) {
+					e2.printStackTrace();
+				}
+			}
+		}
+		return deleteCount;
+	}
+	
 	public int updateRole(Role role) {
 		int updateCount=0;
 
