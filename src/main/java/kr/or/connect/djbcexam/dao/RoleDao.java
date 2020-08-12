@@ -2,6 +2,8 @@ package kr.or.connect.djbcexam.dao;
 
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.PreparedStatement;
@@ -12,6 +14,34 @@ public class RoleDao {
 	public static String dburl = "jdbc:mysql://localhost/connectdb?useSSL=false";
 	public static String dbUser = "root";
 	public static String dbpasswd = "sjm1771033";
+	
+	public List<Role> getRoles(){
+		List<Role> list = new ArrayList<>();
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		String sql = "SELECT description, role_id FROM role order by role_id";
+		try(Connection conn = (Connection) DriverManager.getConnection(dburl, dbUser, dbpasswd);
+			PreparedStatement ps = (PreparedStatement) conn.prepareStatement(sql)) {
+			try(ResultSet rs = ps.executeQuery()) {
+				while(rs.next()) {
+					String description = rs.getString("description"); // description 넣어도 결과 같음
+					int id = rs.getInt("role_id"); // 2 넣어도 결과 같음 
+					Role role = new Role(id, description);
+					list.add(role);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return list;
+	}
 	
 	public int deleteRole(int roleId) {
 		int deleteCount = 0;
