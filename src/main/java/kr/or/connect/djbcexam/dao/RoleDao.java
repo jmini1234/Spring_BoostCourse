@@ -13,6 +13,46 @@ public class RoleDao {
 	public static String dbUser = "root";
 	public static String dbpasswd = "sjm1771033";
 	
+	public int updateRole(Role role) {
+		int updateCount=0;
+
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			conn = (Connection) DriverManager.getConnection(dburl, dbUser, dbpasswd);
+			String sql = "UPDATE role SET description=? WHERE role_id = ?";
+			ps = (PreparedStatement) conn.prepareStatement(sql);
+			
+			ps.setString(1, role.getDescription());
+			// role_id는 입력 받음  
+			ps.setInt(2, role.getRoleId());
+			
+			updateCount = ps.executeUpdate();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if(conn != null) {
+				try {
+					conn.close();
+				} catch (Exception e2) {
+					e2.printStackTrace();
+				}
+			}
+			if(ps != null) {
+				try {
+					ps.close();
+				} catch (Exception e2) {
+					e2.printStackTrace();
+				}
+			}
+		}
+		
+		return updateCount;
+	}
+		
 	public int addRole(Role role) {
 		int insertCount = 0;
 		Connection conn = null;
